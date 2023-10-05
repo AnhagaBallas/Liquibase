@@ -1,12 +1,10 @@
 package com.example.liquidbase.repository;
 
-import com.example.liquidbase.model.Product;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import javax.sql.DataSource;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,11 +15,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Repository
+@RequiredArgsConstructor
 public class JDBCRepositoryImpl implements JDBCRepository {
-    @Autowired
-    DataSource dataSource;
-    @Autowired
-    NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private final String script = read("ScriptForNames.sql");
 
     private static String read(String scriptFileName) {
@@ -37,11 +34,7 @@ public class JDBCRepositoryImpl implements JDBCRepository {
     public List<String> getProductName(String name) {
         Map<String, String> map = new HashMap<>();
         map.put("name", name);
-        List<String> productLis = namedParameterJdbcTemplate.query(script, map, (rs, rowNum) -> {
-            String productName = rs.getString("product_name");
-            return (new Product(productName)).toString();
-
-        });
+        List<String> productLis = namedParameterJdbcTemplate.queryForList(script, map, String.class);
         return productLis;
     }
 }

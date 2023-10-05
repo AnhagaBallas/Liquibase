@@ -8,7 +8,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class JDBCServiceImpl implements JDBCService{
+public class JDBCServiceImpl implements JDBCService {
     private final JDBCRepositoryImpl repository;
 
     @Override
